@@ -3,6 +3,7 @@ import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import './App.css'
 import upperhillLockup from './assets/upperhill-lockup.svg'
 import { mockTransactions } from './data/mockTransactions'
+import Icon from './components/Icon'
 import AddTransactionPage from './pages/AddTransactionPage'
 import DashboardPage from './pages/DashboardPage'
 import LoginPage from './pages/LoginPage'
@@ -15,8 +16,10 @@ import {
   signInAdmin,
   signOutAdmin,
 } from './services/supabase'
-import { loadFinanceSettings, saveOpeningBalance } from './services/settingsStore'
+import { clearActivityLog, loadActivityLog, logFinanceActivity } from './services/activityStore'
+import { loadFinanceSettings, resetFinanceSettings, saveOpeningBalance } from './services/settingsStore'
 import {
+  clearTransactions,
   deleteTransaction,
   loadTransactions,
   saveTransaction,
@@ -24,10 +27,10 @@ import {
 } from './services/transactionStore'
 
 const navItems = [
-  { label: 'Overview', to: '/' },
-  { label: 'Add Entry', to: '/add' },
-  { label: 'Cashbook', to: '/transactions' },
-  { label: 'Settings', to: '/settings' },
+  { label: 'Overview', to: '/', icon: 'dashboard' },
+  { label: 'Add Entry', to: '/add', icon: 'plus' },
+  { label: 'Cashbook', to: '/transactions', icon: 'ledger' },
+  { label: 'Settings', to: '/settings', icon: 'settings' },
 ]
 
 function createTransactionId() {
@@ -57,6 +60,7 @@ function getAdminName(email) {
 function AppShell() {
   const [transactions, setTransactions] = useState([])
   const [openingBalance, setOpeningBalance] = useState(0)
+  const [activityLog, setActivityLog] = useState([])
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(true)
   const [isCheckingAuth, setIsCheckingAuth] = useState(true)
   const [isSigningIn, setIsSigningIn] = useState(false)
@@ -116,26 +120,30 @@ function AppShell() {
       if (!session) {
         setTransactions([])
         setOpeningBalance(0)
+        setActivityLog([])
         setIsLoadingTransactions(false)
         return
       }
 
       setIsLoadingTransactions(true)
       try {
-        const [initialTransactions, settings] = await Promise.all([
+        const [initialTransactions, settings, activities] = await Promise.all([
           loadTransactions(mockTransactions),
           loadFinanceSettings(),
+          loadActivityLog(),
         ])
 
         if (isMounted) {
           setTransactions(initialTransactions)
           setOpeningBalance(settings.openingBalance)
+          setActivityLog(activities)
         }
       } catch (error) {
         console.error('Failed to load finance data:', error)
         if (isMounted) {
           setTransactions(mockTransactions)
           setOpeningBalance(0)
+          setActivityLog([])
           setSyncStatus('Fallback seed data loaded')
         }
       } finally {
@@ -151,6 +159,11 @@ function AppShell() {
       isMounted = false
     }
   }, [session])
+
+  async function pushActivity(action, message, metadata = {}) {
+    const nextActivity = await logFinanceActivity({ action, message, metadata })
+    setActivityLog(nextActivity)
+  }
 
   async function handleLogin(credentials) {
     if (!hasSupabaseConfig) {
@@ -178,6 +191,7 @@ function AppShell() {
       await signOutAdmin()
       setTransactions([])
       setOpeningBalance(0)
+      setActivityLog([])
       setSyncStatus(hasSupabaseConfig ? 'Signed out' : 'Local device storage')
     } catch (error) {
       console.error('Sign out failed:', error)
@@ -211,6 +225,11 @@ function AppShell() {
     try {
       const nextTransactions = await saveTransaction(nextTransaction)
       setTransactions(nextTransactions)
+      await pushActivity(
+        'create',
+        `${nextTransaction.category} recorded for ${nextTransaction.amount.toLocaleString('en-KE')} KES.`,
+        { transactionId: nextTransaction.id, type: nextTransaction.type },
+      )
       setSyncStatus(hasSupabaseConfig ? 'Saved to Supabase and device' : 'Saved on this device')
       return { ok: true }
     } catch (error) {
@@ -224,6 +243,11 @@ function AppShell() {
     try {
       const nextTransactions = await updateTransaction(transactionInput)
       setTransactions(nextTransactions)
+      await pushActivity(
+        'update',
+        `${transactionInput.category} was edited and saved again.`,
+        { transactionId: transactionInput.id },
+      )
       setSyncStatus('Transaction updated')
       return { ok: true }
     } catch (error) {
@@ -234,9 +258,18 @@ function AppShell() {
   }
 
   async function handleDeleteTransaction(transactionId) {
+    const targetTransaction = transactions.find((transaction) => transaction.id === transactionId)
+
     try {
       const nextTransactions = await deleteTransaction(transactionId)
       setTransactions(nextTransactions)
+      if (targetTransaction) {
+        await pushActivity(
+          'delete',
+          `${targetTransaction.category} for ${targetTransaction.amount.toLocaleString('en-KE')} KES was deleted.`,
+          { transactionId },
+        )
+      }
       setSyncStatus('Transaction deleted')
       return { ok: true }
     } catch (error) {
@@ -250,11 +283,39 @@ function AppShell() {
     try {
       const settings = await saveOpeningBalance(nextOpeningBalance)
       setOpeningBalance(settings.openingBalance)
+      await pushActivity(
+        'settings',
+        `Opening balance updated to ${Number(nextOpeningBalance).toLocaleString('en-KE')} KES.`,
+      )
       setSyncStatus('Opening balance updated')
       return { ok: true }
     } catch (error) {
       console.error('Failed to save opening balance:', error)
       setSyncStatus('Opening balance update failed')
+      return { ok: false }
+    }
+  }
+
+  async function handleResetFinanceData() {
+    try {
+      const [nextTransactions] = await Promise.all([
+        clearTransactions(),
+        resetFinanceSettings(),
+        clearActivityLog(),
+      ])
+      setTransactions(nextTransactions)
+      setOpeningBalance(0)
+      setActivityLog([])
+      const nextActivity = await logFinanceActivity({
+        action: 'reset',
+        message: 'Finance desk was reset to a fresh start.',
+      })
+      setActivityLog(nextActivity)
+      setSyncStatus('Finance desk reset to zero')
+      return { ok: true }
+    } catch (error) {
+      console.error('Failed to reset finance desk:', error)
+      setSyncStatus('Finance reset failed')
       return { ok: false }
     }
   }
@@ -338,7 +399,8 @@ function AppShell() {
                   isActive ? 'nav-link nav-link--active' : 'nav-link'
                 }
               >
-                {item.label}
+                <Icon name={item.icon} size={16} />
+                <span>{item.label}</span>
               </NavLink>
             ))}
           </nav>
@@ -361,6 +423,7 @@ function AppShell() {
             path="/"
             element={
               <DashboardPage
+                activityLog={activityLog}
                 adminName={adminName}
                 isLoadingTransactions={isLoadingTransactions}
                 openingBalance={openingBalance}
@@ -394,9 +457,11 @@ function AppShell() {
             path="/settings"
             element={
               <SettingsPage
+                activityLog={activityLog}
                 adminName={adminName}
                 installState={{ canInstall: Boolean(installPromptEvent) }}
                 onInstallApp={handleInstallApp}
+                onResetFinanceData={handleResetFinanceData}
                 onSaveOpeningBalance={handleSaveOpeningBalance}
                 openingBalance={openingBalance}
                 syncStatus={syncStatus}

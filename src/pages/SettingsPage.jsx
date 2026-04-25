@@ -1,10 +1,14 @@
 import { useState } from 'react'
+import ActivityFeed from '../components/ActivityFeed'
+import Icon from '../components/Icon'
 import { downloadCashflowCsvReport, printCashflowReport } from '../utils/reportExport'
 
 export default function SettingsPage({
+  activityLog,
   adminName,
   installState,
   onInstallApp,
+  onResetFinanceData,
   onSaveOpeningBalance,
   openingBalance,
   syncStatus,
@@ -13,6 +17,7 @@ export default function SettingsPage({
   const [value, setValue] = useState(String(openingBalance))
   const [message, setMessage] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [isResetting, setIsResetting] = useState(false)
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -35,6 +40,28 @@ export default function SettingsPage({
 
     setValue(String(nextValue))
     setMessage('Opening balance updated successfully.')
+  }
+
+  async function handleResetClick() {
+    const shouldReset = window.confirm(
+      'Clear all current transactions, set opening balance back to zero, and remove old activity logs?',
+    )
+
+    if (!shouldReset) {
+      return
+    }
+
+    setIsResetting(true)
+    const result = await onResetFinanceData()
+    setIsResetting(false)
+
+    if (!result.ok) {
+      setMessage('Finance desk could not be reset. Please try again.')
+      return
+    }
+
+    setValue('0')
+    setMessage('Finance desk reset. The school can now start from a fresh zero balance.')
   }
 
   return (
@@ -90,14 +117,15 @@ export default function SettingsPage({
           </div>
         </div>
         <p className="muted-copy">
-          The print layout now uses a formal school report header so you can hand it out or save it
-          as PDF for meetings, bursar review, and admin records.
+          The print layout uses a formal school report header so you can hand it out or save it as
+          PDF for meetings, bursar review, and admin records.
         </p>
         <div className="settings-actions settings-actions--stacked">
           <button
             type="button"
             onClick={() => downloadCashflowCsvReport({ openingBalance, transactions })}
           >
+            <Icon name="ledger" size={16} />
             Download CSV Report
           </button>
           <button
@@ -105,6 +133,7 @@ export default function SettingsPage({
             className="secondary-button"
             onClick={() => printCashflowReport({ openingBalance, transactions })}
           >
+            <Icon name="dashboard" size={16} />
             Print Official Report
           </button>
         </div>
@@ -124,7 +153,27 @@ export default function SettingsPage({
         </p>
         <div className="settings-actions settings-actions--stacked">
           <button type="button" onClick={onInstallApp} disabled={!installState.canInstall}>
+            <Icon name="plus" size={16} />
             {installState.canInstall ? 'Install App' : 'Install Not Available Yet'}
+          </button>
+        </div>
+      </section>
+
+      <section className="content-card content-card--form danger-card">
+        <div className="section-heading compact-heading">
+          <div>
+            <p className="section-kicker">Fresh Start</p>
+            <h3>Clear all testing records and return to zero</h3>
+          </div>
+        </div>
+        <p className="muted-copy">
+          Use this once before handover if you want the school to begin with zero opening balance,
+          no test transactions, and a clean activity feed.
+        </p>
+        <div className="settings-actions settings-actions--stacked">
+          <button type="button" className="secondary-button danger-button" onClick={handleResetClick}>
+            <Icon name="reset" size={16} />
+            {isResetting ? 'Resetting...' : 'Reset Finance Desk'}
           </button>
         </div>
       </section>
@@ -155,6 +204,8 @@ export default function SettingsPage({
           </div>
         </div>
       </section>
+
+      <ActivityFeed activities={activityLog.slice(0, 8)} />
     </div>
   )
 }

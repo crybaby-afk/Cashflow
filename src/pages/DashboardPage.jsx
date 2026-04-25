@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import ActivityFeed from '../components/ActivityFeed'
 import QuickActionCard from '../components/QuickActionCard'
 import SummaryCard from '../components/SummaryCard'
 import TransactionTable from '../components/TransactionTable'
@@ -13,7 +14,13 @@ function formatNumber(value) {
   return value.toLocaleString('en-KE')
 }
 
-export default function DashboardPage({ adminName, isLoadingTransactions, openingBalance, transactions }) {
+export default function DashboardPage({
+  activityLog,
+  adminName,
+  isLoadingTransactions,
+  openingBalance,
+  transactions,
+}) {
   const [period, setPeriod] = useState('month')
   const latestTransactionDate = getLatestTransactionDate(transactions)
 
@@ -27,6 +34,7 @@ export default function DashboardPage({ adminName, isLoadingTransactions, openin
 
   const summary = getTransactionSummary(scopedTransactions, openingBalance)
   const recentTransactions = sortTransactionsNewestFirst(transactions).slice(0, 5)
+  const recentActivity = activityLog.slice(0, 5)
   const isDeficit = summary.balance < 0
   const deficitAmount = Math.abs(summary.balance)
   const scopeLabel = period === 'month' ? 'Monthly view' : 'All records'
@@ -146,18 +154,22 @@ export default function DashboardPage({ adminName, isLoadingTransactions, openin
         />
       </section>
 
-      <section className="content-card content-card--ledger">
-        <div className="section-heading">
-          <div>
-            <p className="section-kicker">Recent Transactions</p>
-            <h3>Latest activity from the UpperHill finance desk.</h3>
+      <section className="dashboard-secondary-grid">
+        <section className="content-card content-card--ledger">
+          <div className="section-heading">
+            <div>
+              <p className="section-kicker">Recent Transactions</p>
+              <h3>Latest activity from the UpperHill finance desk.</h3>
+            </div>
+            <span className="pill">{recentTransactions.length} latest entries</span>
           </div>
-          <span className="pill">{recentTransactions.length} latest entries</span>
-        </div>
-        <TransactionTable
-          emptyMessage={isLoadingTransactions ? 'Loading transactions...' : undefined}
-          transactions={recentTransactions}
-        />
+          <TransactionTable
+            emptyMessage={isLoadingTransactions ? 'Loading transactions...' : undefined}
+            transactions={recentTransactions}
+          />
+        </section>
+
+        <ActivityFeed activities={recentActivity} />
       </section>
     </div>
   )

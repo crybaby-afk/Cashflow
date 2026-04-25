@@ -57,3 +57,7 @@ export async function saveOpeningBalance(openingBalance) {
   setLocalSettings(nextSettings)
   return nextSettings
 }
+
+export async function resetFinanceSettings() {
+  return saveOpeningBalance(0)
+}

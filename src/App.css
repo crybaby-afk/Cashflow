@@ -1657,3 +1657,147 @@ body {
     grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
   }
 }
+.summary-card-top,
+.quick-action-header,
+.activity-item,
+.nav-link,
+.settings-actions button,
+.editor-actions button,
+.table-action,
+.type-badge,
+.activity-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.summary-card-top,
+.quick-action-header {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.summary-icon,
+.quick-action-icon,
+.activity-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f6f2;
+}
+
+.activity-pill {
+  justify-content: center;
+}
+
+.activity-list {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.activity-item {
+  align-items: flex-start;
+  padding: 0.9rem 0;
+  border-top: 1px solid rgba(181, 202, 196, 0.08);
+}
+
+.activity-item:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.activity-item strong {
+  display: block;
+  color: #eef5f0;
+}
+
+.activity-item p {
+  margin: 0.22rem 0 0;
+  color: #9eb0aa;
+  font-size: 0.92rem;
+}
+
+.compact-empty-state {
+  padding: 1.4rem 0.5rem 0.5rem;
+}
+
+.dashboard-secondary-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.danger-card {
+  border-color: rgba(145, 85, 104, 0.18);
+}
+
+.danger-button {
+  color: #f2d7df;
+  border-color: rgba(145, 85, 104, 0.18);
+}
+
+.transaction-table td {
+  color: #e8f0eb;
+}
+
+@media (min-width: 980px) {
+  .dashboard-secondary-grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.75fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .transaction-table,
+  .transaction-table thead,
+  .transaction-table tbody,
+  .transaction-table tr,
+  .transaction-table th,
+  .transaction-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .transaction-table thead {
+    display: none;
+  }
+
+  .transaction-table tbody {
+    display: grid;
+    gap: 0.85rem;
+    padding: 0.9rem;
+  }
+
+  .transaction-table tr {
+    padding: 0.9rem;
+    border: 1px solid rgba(181, 202, 196, 0.1);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .transaction-table td {
+    padding: 0.45rem 0;
+    border: 0;
+  }
+
+  .transaction-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.22rem;
+    color: #94aaa2;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .table-actions {
+    width: 100%;
+  }
+
+  .table-actions > * {
+    flex: 1 1 130px;
+  }
+}

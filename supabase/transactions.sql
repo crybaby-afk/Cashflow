@@ -23,9 +23,18 @@ create table if not exists public.transactions (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.activity_logs (
+  id uuid primary key default gen_random_uuid(),
+  action text not null,
+  message text not null,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
 alter table public.admin_users enable row level security;
 alter table public.finance_settings enable row level security;
 alter table public.transactions enable row level security;
+alter table public.activity_logs enable row level security;
 
 drop policy if exists "Allow approved admins to read admin emails" on public.admin_users;
 drop policy if exists "Allow approved admins to read settings" on public.finance_settings;
@@ -34,6 +43,9 @@ drop policy if exists "Allow approved admins to read transactions" on public.tra
 drop policy if exists "Allow approved admins to insert transactions" on public.transactions;
 drop policy if exists "Allow approved admins to update transactions" on public.transactions;
 drop policy if exists "Allow approved admins to delete transactions" on public.transactions;
+drop policy if exists "Allow approved admins to read activity logs" on public.activity_logs;
+drop policy if exists "Allow approved admins to insert activity logs" on public.activity_logs;
+drop policy if exists "Allow approved admins to delete activity logs" on public.activity_logs;
 
 create policy "Allow approved admins to read admin emails"
 on public.admin_users
@@ -104,6 +116,36 @@ with check (
 
 create policy "Allow approved admins to delete transactions"
 on public.transactions
+for delete
+using (
+  exists (
+    select 1 from public.admin_users
+    where lower(admin_users.email) = lower(auth.jwt() ->> 'email')
+  )
+);
+
+create policy "Allow approved admins to read activity logs"
+on public.activity_logs
+for select
+using (
+  exists (
+    select 1 from public.admin_users
+    where lower(admin_users.email) = lower(auth.jwt() ->> 'email')
+  )
+);
+
+create policy "Allow approved admins to insert activity logs"
+on public.activity_logs
+for insert
+with check (
+  exists (
+    select 1 from public.admin_users
+    where lower(admin_users.email) = lower(auth.jwt() ->> 'email')
+  )
+);
+
+create policy "Allow approved admins to delete activity logs"
+on public.activity_logs
 for delete
 using (
   exists (

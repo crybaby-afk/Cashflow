@@ -50,7 +50,7 @@ export async function loadTransactions(seedTransactions = []) {
       .order('date', { ascending: false })
       .order('created_at', { ascending: false })
 
-    if (!error && data?.length) {
+    if (!error && data) {
       const normalizedTransactions = data.map(normalizeTransaction)
       setLocalTransactions(normalizedTransactions)
       return normalizedTransactions
@@ -147,4 +147,16 @@ export async function deleteTransaction(transactionId) {
   )
   setLocalTransactions(nextTransactions)
   return nextTransactions
+}
+
+export async function clearTransactions() {
+  if (hasSupabaseConfig && supabase) {
+    const { error } = await supabase.from(TABLE_NAME).delete().neq('id', '00000000-0000-0000-0000-000000000000')
+    if (error) {
+      throw error
+    }
+  }
+
+  setLocalTransactions([])
+  return []
 }
