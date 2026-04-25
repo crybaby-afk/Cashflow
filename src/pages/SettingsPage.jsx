@@ -1,0 +1,120 @@
+import { useState } from 'react'
+import { downloadCashflowCsvReport, printCashflowReport } from '../utils/reportExport'
+
+export default function SettingsPage({
+  installState,
+  onInstallApp,
+  onSaveOpeningBalance,
+  openingBalance,
+  syncStatus,
+  transactions,
+}) {
+  const [value, setValue] = useState(String(openingBalance))
+  const [message, setMessage] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setMessage('')
+
+    const nextValue = Number(value)
+    if (Number.isNaN(nextValue)) {
+      setMessage('Opening balance must be a valid number.')
+      return
+    }
+
+    setIsSaving(true)
+    const result = await onSaveOpeningBalance(nextValue)
+    setIsSaving(false)
+
+    if (!result.ok) {
+      setMessage('Opening balance could not be saved. Please try again.')
+      return
+    }
+
+    setValue(String(nextValue))
+    setMessage('Opening balance updated successfully.')
+  }
+
+  return (
+    <div className="page-grid settings-grid">
+      <section className="content-card settings-hero">
+        <div>
+          <p className="section-kicker">Finance Settings</p>
+          <h2>Set the opening balance, generate reports, and prepare the app for school use.</h2>
+          <p className="muted-copy">
+            These tools help Upper Hill Academy Morit start from the correct balance instead of
+            assuming every term begins at zero.
+          </p>
+        </div>
+        <div className="settings-highlight">
+          <span>Current Opening Balance</span>
+          <strong>KES {Number(openingBalance).toLocaleString('en-KE')}</strong>
+          <p>{syncStatus}</p>
+        </div>
+      </section>
+
+      <section className="content-card content-card--form">
+        <div className="section-heading compact-heading">
+          <div>
+            <p className="section-kicker">Opening Balance</p>
+            <h3>Set the starting cash position</h3>
+          </div>
+        </div>
+
+        <form className="transaction-form" onSubmit={handleSubmit}>
+          <label>
+            <span>Opening Balance (KES)</span>
+            <input
+              type="number"
+              step="1"
+              value={value}
+              onChange={(event) => setValue(event.target.value)}
+            />
+          </label>
+
+          {message ? <p className="form-message form-message--success">{message}</p> : null}
+
+          <div className="editor-actions">
+            <button type="submit">{isSaving ? 'Saving...' : 'Save Opening Balance'}</button>
+          </div>
+        </form>
+      </section>
+
+      <section className="content-card content-card--form">
+        <div className="section-heading compact-heading">
+          <div>
+            <p className="section-kicker">Reports</p>
+            <h3>Export or print the school cashflow record</h3>
+          </div>
+        </div>
+        <div className="settings-actions">
+          <button type="button" onClick={() => downloadCashflowCsvReport({ openingBalance, transactions })}>
+            Download CSV Report
+          </button>
+          <button type="button" className="secondary-button" onClick={() => printCashflowReport({ openingBalance, transactions })}>
+            Print Report
+          </button>
+        </div>
+      </section>
+
+      <section className="content-card content-card--form">
+        <div className="section-heading compact-heading">
+          <div>
+            <p className="section-kicker">Install App</p>
+            <h3>Make the cashflow system feel like an app</h3>
+          </div>
+        </div>
+        <p className="muted-copy">
+          On supported browsers, staff can install this tool on desktop or phone for faster
+          access from the school office.
+        </p>
+        <div className="settings-actions">
+          <button type="button" onClick={onInstallApp} disabled={!installState.canInstall}>
+            {installState.canInstall ? 'Install App' : 'Install Not Available Yet'}
+          </button>
+        </div>
+      </section>
+    </div>
+  )
+}
