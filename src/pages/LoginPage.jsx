@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import upperhillLockup from '../assets/upperhill-lockup.svg'
 
 const initialForm = {
   email: '',
@@ -33,14 +34,26 @@ export default function LoginPage({ onLogin, isSubmitting, isSupabaseReady }) {
   }
 
   return (
-    <section className="login-shell">
-      <article className="login-card">
-        <p className="section-kicker">Admin Access</p>
-        <h2>Sign in to open the UpperHill Morit finance desk.</h2>
-        <p className="muted-copy">
-          Only approved administrator emails can access cashflow records, transaction entry,
-          and the school cashbook.
-        </p>
+    <section className="login-shell login-shell--branded">
+      <article className="login-card login-card--school">
+        <div className="login-hero">
+          <div className="login-branding">
+            <img className="login-logo" src={upperhillLockup} alt="Upper Hill Academy Morit official logo" />
+            <div>
+              <p className="section-kicker login-kicker">UpperHill Morit</p>
+              <h2>Welcome to UpperHill Finance.</h2>
+              <p className="muted-copy login-copy">
+                Sign in to open the school cashbook, update balances, record fees and expenses,
+                and keep the finance desk moving with confidence.
+              </p>
+            </div>
+          </div>
+          <div className="login-banner">
+            <span>Sailing to Success</span>
+            <strong>UpperHill admin access only</strong>
+            <p>Approved school administrators can continue to the finance workspace below.</p>
+          </div>
+        </div>
 
         {!isSupabaseReady ? (
           <div className="form-message form-message--error">
@@ -73,12 +86,13 @@ export default function LoginPage({ onLogin, isSubmitting, isSupabaseReady }) {
 
           {errorMessage ? <p className="form-message form-message--error">{errorMessage}</p> : null}
 
-          <button type="submit" disabled={isSubmitting || !isSupabaseReady}>
-            {isSubmitting ? 'Signing in...' : 'Sign In'}
-          </button>
+          <div className="login-actions">
+            <button type="submit" disabled={isSubmitting || !isSupabaseReady}>
+              {isSubmitting ? 'Opening UpperHill...' : 'Enter UpperHill Finance'}
+            </button>
+          </div>
         </form>
       </article>
     </section>
   )
 }
-

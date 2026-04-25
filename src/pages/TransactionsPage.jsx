@@ -23,6 +23,7 @@ function createEditForm(transaction) {
 }
 
 export default function TransactionsPage({
+  adminName,
   isLoadingTransactions,
   onDeleteTransaction,
   onUpdateTransaction,
@@ -153,10 +154,10 @@ export default function TransactionsPage({
       <section className="content-card ledger-toolbar ledger-toolbar--school">
         <div>
           <p className="section-kicker">Cashbook</p>
-          <h2>UpperHill Morit ledger with a clean school-office reading experience.</h2>
+          <h2>Hello, {adminName}. Review and correct UpperHill Morit's ledger here.</h2>
           <p className="muted-copy">
-            Review every movement in one place using the same transaction model behind the
-            dashboard totals and entry form.
+            Every movement lives in one place so you can filter, edit, and clean the books without
+            losing sight of the school's real balance.
           </p>
         </div>
 
@@ -250,7 +251,7 @@ export default function TransactionsPage({
 
             {formMessage ? <p className="form-message form-message--error">{formMessage}</p> : null}
 
-            <div className="editor-actions">
+            <div className="editor-actions editor-actions--wide">
               <button type="submit">{isSaving ? 'Updating...' : 'Save Changes'}</button>
               <button
                 type="button"

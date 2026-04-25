@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { downloadCashflowCsvReport, printCashflowReport } from '../utils/reportExport'
 
 export default function SettingsPage({
+  adminName,
   installState,
   onInstallApp,
   onSaveOpeningBalance,
@@ -41,10 +42,10 @@ export default function SettingsPage({
       <section className="content-card settings-hero">
         <div>
           <p className="section-kicker">Finance Settings</p>
-          <h2>Set the opening balance, generate reports, and prepare the app for school use.</h2>
+          <h2>Hello, {adminName}. Keep UpperHill's balance, reports, and app setup in order.</h2>
           <p className="muted-copy">
-            These tools help Upper Hill Academy Morit start from the correct balance instead of
-            assuming every term begins at zero.
+            These tools help Upper Hill Academy Morit start from the correct balance, export
+            official reports, and stay ready for office and mobile use.
           </p>
         </div>
         <div className="settings-highlight">
@@ -75,7 +76,7 @@ export default function SettingsPage({
 
           {message ? <p className="form-message form-message--success">{message}</p> : null}
 
-          <div className="editor-actions">
+          <div className="editor-actions editor-actions--wide">
             <button type="submit">{isSaving ? 'Saving...' : 'Save Opening Balance'}</button>
           </div>
         </form>
@@ -92,7 +93,7 @@ export default function SettingsPage({
           The print layout now uses a formal school report header so you can hand it out or save it
           as PDF for meetings, bursar review, and admin records.
         </p>
-        <div className="settings-actions">
+        <div className="settings-actions settings-actions--stacked">
           <button
             type="button"
             onClick={() => downloadCashflowCsvReport({ openingBalance, transactions })}
@@ -121,7 +122,7 @@ export default function SettingsPage({
           from the school office. On iPhone or iPad, use the browser Share menu and choose Add to
           Home Screen after the site is deployed.
         </p>
-        <div className="settings-actions">
+        <div className="settings-actions settings-actions--stacked">
           <button type="button" onClick={onInstallApp} disabled={!installState.canInstall}>
             {installState.canInstall ? 'Install App' : 'Install Not Available Yet'}
           </button>
@@ -136,8 +137,8 @@ export default function SettingsPage({
           </div>
         </div>
         <p className="muted-copy">
-          This project is now ready for Vercel deployment with routing support for React pages.
-          After deployment, staff can open the live link and install it on phones or desktops.
+          This project is ready for Vercel deployment with routing support for React pages. After
+          deployment, staff can open the live link and install it on phones or desktops.
         </p>
         <div className="deployment-steps">
           <div className="deployment-step">

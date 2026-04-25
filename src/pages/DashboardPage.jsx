@@ -13,7 +13,7 @@ function formatNumber(value) {
   return value.toLocaleString('en-KE')
 }
 
-export default function DashboardPage({ isLoadingTransactions, openingBalance, transactions }) {
+export default function DashboardPage({ adminName, isLoadingTransactions, openingBalance, transactions }) {
   const [period, setPeriod] = useState('month')
   const latestTransactionDate = getLatestTransactionDate(transactions)
 
@@ -36,10 +36,10 @@ export default function DashboardPage({ isLoadingTransactions, openingBalance, t
       <section className="hero-panel hero-panel--school hero-panel--dashboard">
         <div className="hero-copy">
           <p className="section-kicker">Finance Overview</p>
-          <h2>UpperHill Morit cashflow at a glance for the bursar and school administration.</h2>
+          <h2>Hello, {adminName}. Here is UpperHill Morit's live cash position.</h2>
           <p className="muted-copy">
-            The opening balance is now part of the finance model, so the dashboard reflects
-            where the school cashbook actually began before new income and expenses were added.
+            The opening balance now sits inside the finance model, so your totals reflect where
+            the school books actually began before new income and expenses were added.
           </p>
           <div className="view-toggle" aria-label="Dashboard period selector">
             <button
@@ -75,7 +75,7 @@ export default function DashboardPage({ isLoadingTransactions, openingBalance, t
           <p>
             {isLoadingTransactions
               ? 'Loading school records now.'
-              : 'This dashboard now includes the opening balance before applying new transactions.'}
+              : 'UpperHill totals are recalculated from source entries every time.'}
           </p>
         </div>
       </section>
@@ -119,7 +119,7 @@ export default function DashboardPage({ isLoadingTransactions, openingBalance, t
           <p>Transactions are sorted newest first in the ledger.</p>
         </article>
         <article className="status-tile">
-          <span>Balance Formula</span>
+          <span>UpperHill Rule</span>
           <strong>Opening + In - Out</strong>
           <p>The system recalculates totals from source records every time.</p>
         </article>
@@ -150,7 +150,7 @@ export default function DashboardPage({ isLoadingTransactions, openingBalance, t
         <div className="section-heading">
           <div>
             <p className="section-kicker">Recent Transactions</p>
-            <h3>Latest activity from the school finance desk.</h3>
+            <h3>Latest activity from the UpperHill finance desk.</h3>
           </div>
           <span className="pill">{recentTransactions.length} latest entries</span>
         </div>

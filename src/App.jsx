@@ -34,6 +34,26 @@ function createTransactionId() {
   return `txn-${crypto.randomUUID()}`
 }
 
+function getAdminName(email) {
+  if (!email) {
+    return 'Admin'
+  }
+
+  const localPart = email.split('@')[0].toLowerCase()
+
+  if (localPart.startsWith('joan')) {
+    return 'Joan'
+  }
+
+  const words = localPart
+    .replace(/[0-9]+/g, '')
+    .split(/[._-]+/)
+    .filter(Boolean)
+
+  const firstWord = words[0] || 'Admin'
+  return firstWord.charAt(0).toUpperCase() + firstWord.slice(1)
+}
+
 function AppShell() {
   const [transactions, setTransactions] = useState([])
   const [openingBalance, setOpeningBalance] = useState(0)
@@ -262,6 +282,8 @@ function AppShell() {
     )
   }
 
+  const adminName = getAdminName(session.user.email)
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -273,19 +295,19 @@ function AppShell() {
               </div>
               <div className="brand-copy">
                 <p className="eyebrow">Upper Hill Academy Morit</p>
-                <h1>Finance Desk, Cashbook, Reporting, and Installable School Admin Access</h1>
+                <h1>Hello, {adminName}. Welcome back to UpperHill Finance.</h1>
                 <p className="brand-note">
-                  A polished school cashbook for receipts, expenses, live balances, printed
-                  reporting, and fast device access across the finance office.
+                  This is your school finance desk for receipts, expenses, live balances,
+                  reporting, and day-to-day cashbook control.
                 </p>
               </div>
             </div>
 
             <aside className="brand-sidepanel">
               <div className="brand-meta-card">
-                <span>Finance office</span>
-                <strong>Sailing to Success</strong>
-                <p>Built for bursar, admin, and head office review across daily school cashflow work.</p>
+                <span>Good to see you</span>
+                <strong>{adminName}, UpperHill is ready.</strong>
+                <p>Review the books, record new entries, and keep the finance desk moving smoothly.</p>
               </div>
               <div className="brand-meta-card brand-meta-card--glow">
                 <span>Live sync</span>
@@ -301,7 +323,7 @@ function AppShell() {
               <span>School Motto</span>
               <strong>Sailing to Success</strong>
             </div>
-            <div className="sync-chip">Approved admin: {session.user.email}</div>
+            <div className="sync-chip">Hello, {adminName}</div>
           </div>
         </div>
 
@@ -323,7 +345,8 @@ function AppShell() {
           <div className="logo-placeholder-card admin-card">
             <div>
               <span>Signed in administrator</span>
-              <p>{session.user.email}</p>
+              <p>{adminName}</p>
+              <small>{session.user.email}</small>
             </div>
             <button className="logout-button" type="button" onClick={handleSignOut}>
               Sign Out
@@ -338,6 +361,7 @@ function AppShell() {
             path="/"
             element={
               <DashboardPage
+                adminName={adminName}
                 isLoadingTransactions={isLoadingTransactions}
                 openingBalance={openingBalance}
                 transactions={transactions}
@@ -348,6 +372,7 @@ function AppShell() {
             path="/add"
             element={
               <AddTransactionPage
+                adminName={adminName}
                 onAddTransaction={handleAddTransaction}
                 openingBalance={openingBalance}
               />
@@ -357,6 +382,7 @@ function AppShell() {
             path="/transactions"
             element={
               <TransactionsPage
+                adminName={adminName}
                 isLoadingTransactions={isLoadingTransactions}
                 onDeleteTransaction={handleDeleteTransaction}
                 onUpdateTransaction={handleUpdateTransaction}
@@ -368,6 +394,7 @@ function AppShell() {
             path="/settings"
             element={
               <SettingsPage
+                adminName={adminName}
                 installState={{ canInstall: Boolean(installPromptEvent) }}
                 onInstallApp={handleInstallApp}
                 onSaveOpeningBalance={handleSaveOpeningBalance}

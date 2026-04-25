@@ -16,7 +16,7 @@ function getInitialFormState() {
   }
 }
 
-export default function AddTransactionPage({ onAddTransaction, openingBalance }) {
+export default function AddTransactionPage({ adminName, onAddTransaction, openingBalance }) {
   const [formData, setFormData] = useState(getInitialFormState)
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
@@ -82,23 +82,23 @@ export default function AddTransactionPage({ onAddTransaction, openingBalance })
       date: getTodayDate(),
       note: '',
     })
-    setSuccessMessage('Transaction saved. The dashboard and cashbook are now updated.')
+    setSuccessMessage('Transaction saved. UpperHill finance records are now updated.')
   }
 
   return (
     <div className="page-grid two-column-layout">
       <section className="content-card form-intro form-intro--school">
         <p className="section-kicker">Add Entry</p>
-        <h2>Record the school's next finance movement without breaking the running balance.</h2>
+        <h2>Hello, {adminName}. Record UpperHill's next finance movement with confidence.</h2>
         <p className="muted-copy">
-          Every new entry now sits on top of the opening balance you configured in settings, so
-          the school ledger behaves more like a real cashbook.
+          Every new entry now sits on top of the opening balance from settings, so the school
+          ledger behaves more like a proper office cashbook than a temporary tracker.
         </p>
         <div className="status-strip single-column-strip">
           <article className="status-tile">
             <span>Opening Balance</span>
             <strong>KES {Number(openingBalance).toLocaleString('en-KE')}</strong>
-            <p>Update this anytime from the settings page if the school starts a new period.</p>
+            <p>Update this anytime from settings when the school starts a new reporting period.</p>
           </article>
         </div>
       </section>
@@ -107,7 +107,7 @@ export default function AddTransactionPage({ onAddTransaction, openingBalance })
         <div className="section-heading compact-heading">
           <div>
             <p className="section-kicker">School Finance Form</p>
-            <h3>Record a cashbook entry</h3>
+            <h3>Record a new cashbook entry</h3>
           </div>
           <Link className="text-link" to="/transactions">
             Open cashbook
@@ -166,7 +166,12 @@ export default function AddTransactionPage({ onAddTransaction, openingBalance })
           {errorMessage ? <p className="form-message form-message--error">{errorMessage}</p> : null}
           {successMessage ? <p className="form-message form-message--success">{successMessage}</p> : null}
 
-          <button type="submit">{isSaving ? 'Saving...' : 'Save Transaction'}</button>
+          <div className="editor-actions editor-actions--wide">
+            <button type="submit">{isSaving ? 'Saving...' : 'Save Transaction'}</button>
+            <Link className="secondary-button" to="/transactions">
+              Review Cashbook
+            </Link>
+          </div>
         </form>
       </section>
     </div>
