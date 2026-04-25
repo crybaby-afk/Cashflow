@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import './App.css'
-import upperhillBadge from './assets/upperhill-badge.svg'
+import upperhillLockup from './assets/upperhill-lockup.svg'
 import { mockTransactions } from './data/mockTransactions'
 import AddTransactionPage from './pages/AddTransactionPage'
 import DashboardPage from './pages/DashboardPage'
@@ -268,15 +268,15 @@ function AppShell() {
         <div className="brand-block">
           <div className="brand-hero">
             <div className="brand-mark">
-              <div className="brand-logo-shell">
-                <img className="brand-logo" src={upperhillBadge} alt="Upper Hill Academy Morit crest" />
+              <div className="brand-logo-shell brand-logo-shell--lockup">
+                <img className="brand-logo brand-logo--lockup" src={upperhillLockup} alt="Upper Hill Academy Morit official crest and motto" />
               </div>
               <div className="brand-copy">
                 <p className="eyebrow">Upper Hill Academy Morit</p>
-                <h1>Cashflow System for the School Finance Desk</h1>
+                <h1>Finance Desk, Cashbook, Reporting, and Installable School Admin Access</h1>
                 <p className="brand-note">
-                  A polished school cashbook for receipts, expenses, live balances, and daily
-                  administrative reporting under one calm finance workspace.
+                  A polished school cashbook for receipts, expenses, live balances, printed
+                  reporting, and fast device access across the finance office.
                 </p>
               </div>
             </div>
@@ -285,12 +285,12 @@ function AppShell() {
               <div className="brand-meta-card">
                 <span>Finance office</span>
                 <strong>Sailing to Success</strong>
-                <p>Built for Upper Hill Academy Morit bursar and admin work.</p>
+                <p>Built for bursar, admin, and head office review across daily school cashflow work.</p>
               </div>
               <div className="brand-meta-card brand-meta-card--glow">
                 <span>Live sync</span>
                 <strong>{syncStatus}</strong>
-                <p>Secure admin session with cloud-backed cashbook records.</p>
+                <p>Secure admin session with cloud-backed cashbook records and printed reporting.</p>
               </div>
             </aside>
           </div>

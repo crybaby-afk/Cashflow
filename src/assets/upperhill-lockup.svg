@@ -1,0 +1,31 @@
+<svg width="680" height="920" viewBox="0 0 680 920" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="680" height="920" rx="56" fill="#F7F8F4"/>
+  <text x="340" y="110" text-anchor="middle" fill="#232428" font-family="Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif" font-size="70" letter-spacing="2">UPPER HILL ACADEMY</text>
+  <text x="340" y="186" text-anchor="middle" fill="#232428" font-family="Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif" font-size="88" letter-spacing="2">MORIT</text>
+
+  <path d="M340 242L470 315V468C470 560 413 644 340 694C267 644 210 560 210 468V315L340 242Z" fill="#0AA85B"/>
+  <path d="M340 264L453 326V462C453 541 404 614 340 657C276 614 227 541 227 462V326L340 264Z" fill="#34369B"/>
+
+  <path d="M256 692C219 716 190 748 167 786" stroke="#08A84C" stroke-width="28" stroke-linecap="round"/>
+  <path d="M424 692C461 716 490 748 513 786" stroke="#08A84C" stroke-width="28" stroke-linecap="round"/>
+  <path d="M198 753C245 780 292 796 340 801C388 796 435 780 482 753" stroke="#08A84C" stroke-width="34" stroke-linecap="round"/>
+  <path d="M152 814L305 734" stroke="#08A84C" stroke-width="18" stroke-linecap="round"/>
+  <path d="M528 814L375 734" stroke="#08A84C" stroke-width="18" stroke-linecap="round"/>
+
+  <path d="M340 344L353 382H393L361 404L374 442L340 419L306 442L319 404L287 382H327L340 344Z" fill="#F8F8F5"/>
+  <path d="M262 370L272 399H303L279 416L288 446L262 428L236 446L245 416L221 399H252L262 370Z" fill="#F8F8F5"/>
+  <path d="M418 370L428 399H459L435 416L444 446L418 428L392 446L401 416L377 399H408L418 370Z" fill="#F8F8F5"/>
+
+  <path d="M253 507L340 474L427 507L340 547L253 507Z" fill="#F21D2F"/>
+  <path d="M272 515L340 489L408 515L340 543L272 515Z" fill="#F21D2F"/>
+  <rect x="324" y="446" width="32" height="28" fill="#F21D2F"/>
+
+  <path d="M278 520C295 503 321 501 340 519C359 501 385 503 402 520V584C384 573 359 573 340 589C321 573 296 573 278 584V520Z" fill="#FDFDFD" stroke="#111111" stroke-width="8"/>
+  <path d="M340 520V586" stroke="#111111" stroke-width="5"/>
+  <path d="M299 534C312 532 326 535 340 545" stroke="#111111" stroke-width="5" stroke-linecap="round"/>
+  <path d="M381 534C368 532 354 535 340 545" stroke="#111111" stroke-width="5" stroke-linecap="round"/>
+  <path d="M410 442L438 500" stroke="#111111" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="435" cy="497" r="5" fill="#111111"/>
+
+  <text x="340" y="878" text-anchor="middle" fill="#232428" font-family="Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif" font-size="72" letter-spacing="2">SAILING TO SUCCESS</text>
+</svg>

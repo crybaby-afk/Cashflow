@@ -1023,3 +1023,46 @@ a:hover {
     padding: 0.85rem 0.7rem;
   }
 }
+.brand-logo-shell--lockup {
+  width: min(100%, 420px);
+  padding: 1rem;
+}
+
+.brand-logo--lockup {
+  width: min(100%, 360px);
+  max-width: 100%;
+}
+
+.deployment-card {
+  grid-column: 1 / -1;
+}
+
+.deployment-steps {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.deployment-step {
+  padding: 1rem 1.05rem;
+  border-radius: 20px;
+  border: 1px solid rgba(19, 48, 98, 0.1);
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.deployment-step strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--navy-950);
+}
+
+.deployment-step p {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (min-width: 900px) {
+  .deployment-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

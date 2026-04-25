@@ -7,13 +7,15 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['upperhill-badge.svg', 'upperhill-lockup.svg', 'favicon.svg', 'icons.svg'],
       manifest: {
         name: 'Upper Hill Academy Morit Cashflow System',
         short_name: 'UpperHill Cashflow',
         description: 'School finance desk for Upper Hill Academy Morit',
-        theme_color: '#1d2f61',
-        background_color: '#ece7de',
+        theme_color: '#153062',
+        background_color: '#eef2f4',
         display: 'standalone',
+        orientation: 'portrait',
         start_url: '/',
         icons: [
           {
@@ -21,6 +23,12 @@ export default defineConfig({
             sizes: 'any',
             type: 'image/svg+xml',
             purpose: 'any maskable',
+          },
+          {
+            src: '/upperhill-lockup.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
+            purpose: 'any',
           },
           {
             src: '/favicon.svg',

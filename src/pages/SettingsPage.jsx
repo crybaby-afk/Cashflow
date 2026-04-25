@@ -88,12 +88,23 @@ export default function SettingsPage({
             <h3>Export or print the school cashflow record</h3>
           </div>
         </div>
+        <p className="muted-copy">
+          The print layout now uses a formal school report header so you can hand it out or save it
+          as PDF for meetings, bursar review, and admin records.
+        </p>
         <div className="settings-actions">
-          <button type="button" onClick={() => downloadCashflowCsvReport({ openingBalance, transactions })}>
+          <button
+            type="button"
+            onClick={() => downloadCashflowCsvReport({ openingBalance, transactions })}
+          >
             Download CSV Report
           </button>
-          <button type="button" className="secondary-button" onClick={() => printCashflowReport({ openingBalance, transactions })}>
-            Print Report
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => printCashflowReport({ openingBalance, transactions })}
+          >
+            Print Official Report
           </button>
         </div>
       </section>
@@ -106,13 +117,41 @@ export default function SettingsPage({
           </div>
         </div>
         <p className="muted-copy">
-          On supported browsers, staff can install this tool on desktop or phone for faster
-          access from the school office.
+          On supported browsers, staff can install this tool on desktop or phone for faster access
+          from the school office. On iPhone or iPad, use the browser Share menu and choose Add to
+          Home Screen after the site is deployed.
         </p>
         <div className="settings-actions">
           <button type="button" onClick={onInstallApp} disabled={!installState.canInstall}>
             {installState.canInstall ? 'Install App' : 'Install Not Available Yet'}
           </button>
+        </div>
+      </section>
+
+      <section className="content-card content-card--form deployment-card">
+        <div className="section-heading compact-heading">
+          <div>
+            <p className="section-kicker">Deployment</p>
+            <h3>Share the school finance desk online</h3>
+          </div>
+        </div>
+        <p className="muted-copy">
+          This project is now ready for Vercel deployment with routing support for React pages.
+          After deployment, staff can open the live link and install it on phones or desktops.
+        </p>
+        <div className="deployment-steps">
+          <div className="deployment-step">
+            <strong>1. Import repo</strong>
+            <p>Open Vercel, import the Cashflow GitHub repository, and keep the framework as Vite.</p>
+          </div>
+          <div className="deployment-step">
+            <strong>2. Add env variables</strong>
+            <p>Copy the Supabase URL, anon key, and admin email values into the Vercel project settings.</p>
+          </div>
+          <div className="deployment-step">
+            <strong>3. Deploy and install</strong>
+            <p>After the first deployment, open the live link on mobile and use Install App or Add to Home Screen.</p>
+          </div>
         </div>
       </section>
     </div>
