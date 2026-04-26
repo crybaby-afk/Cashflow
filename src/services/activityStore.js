@@ -1,4 +1,4 @@
-import { hasSupabaseConfig, supabase } from './supabase'
+import { hasSupabaseConfig, supabase } from './supabase.js'
 
 const STORAGE_KEY = 'upperhill-morit-cashflow-activity'
 const TABLE_NAME = 'activity_logs'
@@ -88,3 +88,4 @@ export async function clearActivityLog() {
   setLocalActivity([])
   return []
 }
+

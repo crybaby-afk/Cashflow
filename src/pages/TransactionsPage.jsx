@@ -22,28 +22,53 @@ function createEditForm(transaction) {
   }
 }
 
+function matchesSearch(transaction, searchQuery) {
+  if (!searchQuery) {
+    return true
+  }
+
+  const searchableValues = [
+    transaction.category,
+    transaction.note,
+    transaction.date,
+    transaction.amount,
+    transaction.type === 'in' ? 'money in' : 'money out',
+  ]
+
+  return searchableValues
+    .join(' ')
+    .toLowerCase()
+    .includes(searchQuery)
+}
+
 export default function TransactionsPage({
   adminName,
   isLoadingTransactions,
   onDeleteTransaction,
+  onRequestConfirm,
+  onShowToast,
   onUpdateTransaction,
   transactions,
 }) {
   const [activeFilter, setActiveFilter] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
   const [editingTransaction, setEditingTransaction] = useState(null)
   const [editForm, setEditForm] = useState(null)
   const [formMessage, setFormMessage] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
+  const normalizedSearch = searchTerm.trim().toLowerCase()
+
   const filteredTransactions = useMemo(() => {
     const sortedTransactions = sortTransactionsNewestFirst(transactions)
-    if (activeFilter === 'all') {
-      return sortedTransactions
-    }
+    const typeFiltered =
+      activeFilter === 'all'
+        ? sortedTransactions
+        : sortedTransactions.filter((transaction) => transaction.type === activeFilter)
 
-    return sortedTransactions.filter((transaction) => transaction.type === activeFilter)
-  }, [activeFilter, transactions])
+    return typeFiltered.filter((transaction) => matchesSearch(transaction, normalizedSearch))
+  }, [activeFilter, normalizedSearch, transactions])
 
   const categoryOptions = useMemo(() => {
     if (!editForm) {
@@ -117,6 +142,11 @@ export default function TransactionsPage({
 
     if (!result.ok) {
       setFormMessage('The transaction could not be updated. Please try again.')
+      onShowToast({
+        title: 'Update failed',
+        message: 'The selected transaction could not be updated.',
+        tone: 'error',
+      })
       return
     }
 
@@ -126,9 +156,13 @@ export default function TransactionsPage({
   }
 
   async function handleDelete(transaction) {
-    const shouldDelete = window.confirm(
-      `Delete ${transaction.category} for KES ${transaction.amount.toLocaleString('en-KE')}?`,
-    )
+    const shouldDelete = await onRequestConfirm({
+      title: 'Delete this transaction?',
+      description: `Remove ${transaction.category} for KES ${transaction.amount.toLocaleString('en-KE')} from the cashbook?`,
+      confirmLabel: 'Delete Transaction',
+      cancelLabel: 'Keep Transaction',
+      tone: 'danger',
+    })
 
     if (!shouldDelete) {
       return
@@ -139,7 +173,11 @@ export default function TransactionsPage({
     setIsDeleting(false)
 
     if (!result.ok) {
-      window.alert('The transaction could not be deleted. Please try again.')
+      onShowToast({
+        title: 'Delete failed',
+        message: 'The transaction could not be deleted. Please try again.',
+        tone: 'error',
+      })
     }
   }
 
@@ -149,6 +187,12 @@ export default function TransactionsPage({
     setFormMessage('')
   }
 
+  const emptyMessage = isLoadingTransactions
+    ? 'Loading transactions...'
+    : normalizedSearch
+      ? 'No transactions matched your search.'
+      : 'No transactions match this view yet.'
+
   return (
     <div className="page-grid">
       <section className="content-card ledger-toolbar ledger-toolbar--school">
@@ -156,8 +200,8 @@ export default function TransactionsPage({
           <p className="section-kicker">Cashbook</p>
           <h2>Hello, {adminName}. Review and correct UpperHill Morit's ledger here.</h2>
           <p className="muted-copy">
-            Every movement lives in one place so you can filter, edit, and clean the books without
-            losing sight of the school's real balance.
+            Every movement lives in one place so you can filter, search, edit, and clean the books
+            without losing sight of the school's real balance.
           </p>
         </div>
 
@@ -166,17 +210,24 @@ export default function TransactionsPage({
             <button
               key={option.value}
               type="button"
-              className={
-                activeFilter === option.value
-                  ? 'filter-chip filter-chip--active'
-                  : 'filter-chip'
-              }
+              className={activeFilter === option.value ? 'filter-chip filter-chip--active' : 'filter-chip'}
               onClick={() => setActiveFilter(option.value)}
             >
               {option.label}
             </button>
           ))}
         </div>
+
+        <label className="search-field" htmlFor="transaction-search">
+          <span>Search the cashbook</span>
+          <input
+            id="transaction-search"
+            type="search"
+            placeholder="Search category, note, amount, or date"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+        </label>
       </section>
 
       <section className="content-card content-card--ledger">
@@ -188,7 +239,7 @@ export default function TransactionsPage({
           <span className="pill">Sorted newest first</span>
         </div>
         <TransactionTable
-          emptyMessage={isLoadingTransactions ? 'Loading transactions...' : undefined}
+          emptyMessage={emptyMessage}
           onDelete={handleDelete}
           onEdit={handleStartEdit}
           transactions={filteredTransactions}

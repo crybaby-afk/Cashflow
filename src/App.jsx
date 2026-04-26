@@ -2,13 +2,19 @@ import { useEffect, useState } from 'react'
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import './App.css'
 import upperhillLockup from './assets/upperhill-lockup.svg'
-import { mockTransactions } from './data/mockTransactions'
+import ConfirmDialog from './components/ConfirmDialog'
+import ErrorBoundary from './components/ErrorBoundary'
+import Footer from './components/Footer'
 import Icon from './components/Icon'
+import ToastRegion from './components/ToastRegion'
+import { mockTransactions } from './data/mockTransactions'
 import AddTransactionPage from './pages/AddTransactionPage'
 import DashboardPage from './pages/DashboardPage'
 import LoginPage from './pages/LoginPage'
 import SettingsPage from './pages/SettingsPage'
 import TransactionsPage from './pages/TransactionsPage'
+import { clearActivityLog, loadActivityLog, logFinanceActivity } from './services/activityStore'
+import { loadFinanceSettings, resetFinanceSettings, saveOpeningBalance } from './services/settingsStore'
 import {
   getCurrentSession,
   hasSupabaseConfig,
@@ -16,8 +22,6 @@ import {
   signInAdmin,
   signOutAdmin,
 } from './services/supabase'
-import { clearActivityLog, loadActivityLog, logFinanceActivity } from './services/activityStore'
-import { loadFinanceSettings, resetFinanceSettings, saveOpeningBalance } from './services/settingsStore'
 import {
   clearTransactions,
   deleteTransaction,
@@ -35,6 +39,10 @@ const navItems = [
 
 function createTransactionId() {
   return `txn-${crypto.randomUUID()}`
+}
+
+function createToastId() {
+  return `toast-${crypto.randomUUID()}`
 }
 
 function getAdminName(email) {
@@ -67,8 +75,10 @@ function AppShell() {
   const [session, setSession] = useState(null)
   const [installPromptEvent, setInstallPromptEvent] = useState(null)
   const [syncStatus, setSyncStatus] = useState(
-    hasSupabaseConfig ? 'Supabase connected' : 'Local device storage',
+    hasSupabaseConfig ? 'Cloud sync ready' : 'Saved on this device',
   )
+  const [dialogState, setDialogState] = useState(null)
+  const [toasts, setToasts] = useState([])
 
   useEffect(() => {
     function handleBeforeInstallPrompt(event) {
@@ -78,7 +88,11 @@ function AppShell() {
 
     function handleAppInstalled() {
       setInstallPromptEvent(null)
-      setSyncStatus('App installed successfully')
+      setSyncStatus('App installed')
+      showToast({
+        title: 'Installed',
+        message: 'The finance desk is ready from your home screen.',
+      })
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
@@ -144,7 +158,12 @@ function AppShell() {
           setTransactions(mockTransactions)
           setOpeningBalance(0)
           setActivityLog([])
-          setSyncStatus('Fallback seed data loaded')
+          setSyncStatus('Local records loaded')
+          showToast({
+            title: 'Offline backup',
+            message: 'The app loaded from local records because the latest sync was unavailable.',
+            tone: 'warning',
+          })
         }
       } finally {
         if (isMounted) {
@@ -160,6 +179,38 @@ function AppShell() {
     }
   }, [session])
 
+  function dismissToast(toastId) {
+    setToasts((currentToasts) => currentToasts.filter((toast) => toast.id !== toastId))
+  }
+
+  function showToast({ message, title, tone = 'success' }) {
+    const toastId = createToastId()
+    setToasts((currentToasts) => [...currentToasts, { id: toastId, message, title, tone }])
+
+    window.setTimeout(() => {
+      dismissToast(toastId)
+    }, 4200)
+  }
+
+  function requestConfirmation({
+    cancelLabel,
+    confirmLabel,
+    description,
+    title,
+    tone = 'default',
+  }) {
+    return new Promise((resolve) => {
+      setDialogState({ cancelLabel, confirmLabel, description, resolve, title, tone })
+    })
+  }
+
+  function handleDialogClose(confirmed) {
+    if (dialogState?.resolve) {
+      dialogState.resolve(confirmed)
+    }
+    setDialogState(null)
+  }
+
   async function pushActivity(action, message, metadata = {}) {
     const nextActivity = await logFinanceActivity({ action, message, metadata })
     setActivityLog(nextActivity)
@@ -173,7 +224,8 @@ function AppShell() {
     setIsSigningIn(true)
     try {
       await signInAdmin(credentials)
-      setSyncStatus('Signed in as approved admin')
+      setSyncStatus('Admin signed in')
+      showToast({ title: 'Welcome back', message: 'UpperHill Finance is ready to use.' })
       return { ok: true }
     } catch (error) {
       console.error('Login failed:', error)
@@ -192,10 +244,15 @@ function AppShell() {
       setTransactions([])
       setOpeningBalance(0)
       setActivityLog([])
-      setSyncStatus(hasSupabaseConfig ? 'Signed out' : 'Local device storage')
+      setSyncStatus(hasSupabaseConfig ? 'Signed out' : 'Saved on this device')
     } catch (error) {
       console.error('Sign out failed:', error)
       setSyncStatus('Sign out failed')
+      showToast({
+        title: 'Sign-out failed',
+        message: 'The session could not be closed. Please try again.',
+        tone: 'error',
+      })
     }
   }
 
@@ -230,7 +287,8 @@ function AppShell() {
         `${nextTransaction.category} recorded for ${nextTransaction.amount.toLocaleString('en-KE')} KES.`,
         { transactionId: nextTransaction.id, type: nextTransaction.type },
       )
-      setSyncStatus(hasSupabaseConfig ? 'Saved to Supabase and device' : 'Saved on this device')
+      setSyncStatus(hasSupabaseConfig ? 'Saved and synced' : 'Saved on this device')
+      showToast({ title: 'Transaction saved', message: 'The new cashbook entry is now recorded.' })
       return { ok: true }
     } catch (error) {
       console.error('Failed to save transaction:', error)
@@ -249,6 +307,7 @@ function AppShell() {
         { transactionId: transactionInput.id },
       )
       setSyncStatus('Transaction updated')
+      showToast({ title: 'Transaction updated', message: 'The changes were saved successfully.' })
       return { ok: true }
     } catch (error) {
       console.error('Failed to update transaction:', error)
@@ -271,6 +330,7 @@ function AppShell() {
         )
       }
       setSyncStatus('Transaction deleted')
+      showToast({ title: 'Transaction deleted', message: 'The selected entry was removed.' })
       return { ok: true }
     } catch (error) {
       console.error('Failed to delete transaction:', error)
@@ -288,6 +348,7 @@ function AppShell() {
         `Opening balance updated to ${Number(nextOpeningBalance).toLocaleString('en-KE')} KES.`,
       )
       setSyncStatus('Opening balance updated')
+      showToast({ title: 'Opening balance updated', message: 'The starting cash position was saved.' })
       return { ok: true }
     } catch (error) {
       console.error('Failed to save opening balance:', error)
@@ -308,10 +369,11 @@ function AppShell() {
       setActivityLog([])
       const nextActivity = await logFinanceActivity({
         action: 'reset',
-        message: 'Finance desk was reset to a fresh start.',
+        message: 'Finance records were reset to a fresh start.',
       })
       setActivityLog(nextActivity)
       setSyncStatus('Finance desk reset to zero')
+      showToast({ title: 'Finance desk reset', message: 'Transactions and opening balance returned to zero.' })
       return { ok: true }
     } catch (error) {
       console.error('Failed to reset finance desk:', error)
@@ -339,6 +401,7 @@ function AppShell() {
           isSupabaseReady={hasSupabaseConfig}
           onLogin={handleLogin}
         />
+        <ToastRegion onDismiss={dismissToast} toasts={toasts} />
       </div>
     )
   }
@@ -352,7 +415,11 @@ function AppShell() {
           <div className="brand-hero">
             <div className="brand-mark">
               <div className="brand-logo-shell brand-logo-shell--lockup">
-                <img className="brand-logo brand-logo--lockup" src={upperhillLockup} alt="Upper Hill Academy Morit official crest and motto" />
+                <img
+                  alt="Upper Hill Academy Morit official crest and motto"
+                  className="brand-logo brand-logo--lockup"
+                  src={upperhillLockup}
+                />
               </div>
               <div className="brand-copy">
                 <p className="eyebrow">Upper Hill Academy Morit</p>
@@ -389,15 +456,13 @@ function AppShell() {
         </div>
 
         <div className="topbar-panel">
-          <nav className="nav-links" aria-label="Primary navigation">
+          <nav aria-label="Primary navigation" className="nav-links">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
-                to={item.to}
+                className={({ isActive }) => (isActive ? 'nav-link nav-link--active' : 'nav-link')}
                 end={item.to === '/'}
-                className={({ isActive }) =>
-                  isActive ? 'nav-link nav-link--active' : 'nav-link'
-                }
+                to={item.to}
               >
                 <Icon name={item.icon} size={16} />
                 <span>{item.label}</span>
@@ -420,7 +485,6 @@ function AppShell() {
       <main className="page-shell">
         <Routes>
           <Route
-            path="/"
             element={
               <DashboardPage
                 activityLog={activityLog}
@@ -430,9 +494,9 @@ function AppShell() {
                 transactions={transactions}
               />
             }
+            path="/"
           />
           <Route
-            path="/add"
             element={
               <AddTransactionPage
                 adminName={adminName}
@@ -440,45 +504,65 @@ function AppShell() {
                 openingBalance={openingBalance}
               />
             }
+            path="/add"
           />
           <Route
-            path="/transactions"
             element={
               <TransactionsPage
                 adminName={adminName}
                 isLoadingTransactions={isLoadingTransactions}
                 onDeleteTransaction={handleDeleteTransaction}
+                onRequestConfirm={requestConfirmation}
+                onShowToast={showToast}
                 onUpdateTransaction={handleUpdateTransaction}
                 transactions={transactions}
               />
             }
+            path="/transactions"
           />
           <Route
-            path="/settings"
             element={
               <SettingsPage
                 activityLog={activityLog}
                 adminName={adminName}
                 installState={{ canInstall: Boolean(installPromptEvent) }}
                 onInstallApp={handleInstallApp}
+                onRequestConfirm={requestConfirmation}
                 onResetFinanceData={handleResetFinanceData}
                 onSaveOpeningBalance={handleSaveOpeningBalance}
+                onShowToast={showToast}
                 openingBalance={openingBalance}
                 syncStatus={syncStatus}
                 transactions={transactions}
               />
             }
+            path="/settings"
           />
         </Routes>
       </main>
+
+      <ConfirmDialog
+        cancelLabel={dialogState?.cancelLabel}
+        confirmLabel={dialogState?.confirmLabel}
+        description={dialogState?.description}
+        isOpen={Boolean(dialogState)}
+        onCancel={() => handleDialogClose(false)}
+        onConfirm={() => handleDialogClose(true)}
+        title={dialogState?.title}
+        tone={dialogState?.tone}
+      />
+      <ToastRegion onDismiss={dismissToast} toasts={toasts} />
+      <Footer />
     </div>
   )
 }
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppShell />
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AppShell />
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }

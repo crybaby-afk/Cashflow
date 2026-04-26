@@ -1,4 +1,4 @@
-import { hasSupabaseConfig, supabase } from './supabase'
+import { hasSupabaseConfig, supabase } from './supabase.js'
 
 const STORAGE_KEY = 'upperhill-morit-cashflow-transactions'
 const TABLE_NAME = 'transactions'
@@ -160,3 +160,4 @@ export async function clearTransactions() {
   setLocalTransactions([])
   return []
 }
+

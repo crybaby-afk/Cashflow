@@ -1,4 +1,4 @@
-import { hasSupabaseConfig, supabase } from './supabase'
+import { hasSupabaseConfig, supabase } from './supabase.js'
 
 const STORAGE_KEY = 'upperhill-morit-cashflow-settings'
 const TABLE_NAME = 'finance_settings'
@@ -61,3 +61,4 @@ export async function saveOpeningBalance(openingBalance) {
 export async function resetFinanceSettings() {
   return saveOpeningBalance(0)
 }
+

@@ -8,14 +8,17 @@ export default function SettingsPage({
   adminName,
   installState,
   onInstallApp,
+  onRequestConfirm,
   onResetFinanceData,
   onSaveOpeningBalance,
+  onShowToast,
   openingBalance,
   syncStatus,
   transactions,
 }) {
   const [value, setValue] = useState(String(openingBalance))
   const [message, setMessage] = useState('')
+  const [messageTone, setMessageTone] = useState('success')
   const [isSaving, setIsSaving] = useState(false)
   const [isResetting, setIsResetting] = useState(false)
 
@@ -25,6 +28,7 @@ export default function SettingsPage({
 
     const nextValue = Number(value)
     if (Number.isNaN(nextValue)) {
+      setMessageTone('error')
       setMessage('Opening balance must be a valid number.')
       return
     }
@@ -34,18 +38,30 @@ export default function SettingsPage({
     setIsSaving(false)
 
     if (!result.ok) {
+      setMessageTone('error')
       setMessage('Opening balance could not be saved. Please try again.')
+      onShowToast({
+        title: 'Update failed',
+        message: 'Opening balance could not be saved.',
+        tone: 'error',
+      })
       return
     }
 
     setValue(String(nextValue))
+    setMessageTone('success')
     setMessage('Opening balance updated successfully.')
   }
 
   async function handleResetClick() {
-    const shouldReset = window.confirm(
-      'Clear all current transactions, set opening balance back to zero, and remove old activity logs?',
-    )
+    const shouldReset = await onRequestConfirm({
+      title: 'Reset finance desk?',
+      description:
+        'This will clear current transactions, set the opening balance back to zero, and remove older activity log items.',
+      confirmLabel: 'Reset Finance Desk',
+      cancelLabel: 'Keep Records',
+      tone: 'danger',
+    })
 
     if (!shouldReset) {
       return
@@ -56,11 +72,18 @@ export default function SettingsPage({
     setIsResetting(false)
 
     if (!result.ok) {
+      setMessageTone('error')
       setMessage('Finance desk could not be reset. Please try again.')
+      onShowToast({
+        title: 'Reset failed',
+        message: 'The finance desk could not be reset right now.',
+        tone: 'error',
+      })
       return
     }
 
     setValue('0')
+    setMessageTone('success')
     setMessage('Finance desk reset. The school can now start from a fresh zero balance.')
   }
 
@@ -101,7 +124,17 @@ export default function SettingsPage({
             />
           </label>
 
-          {message ? <p className="form-message form-message--success">{message}</p> : null}
+          {message ? (
+            <p
+              className={
+                messageTone === 'error'
+                  ? 'form-message form-message--error'
+                  : 'form-message form-message--success'
+              }
+            >
+              {message}
+            </p>
+          ) : null}
 
           <div className="editor-actions editor-actions--wide">
             <button type="submit">{isSaving ? 'Saving...' : 'Save Opening Balance'}</button>

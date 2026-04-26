@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import ActivityFeed from '../components/ActivityFeed'
+import HelpInfo from '../components/HelpInfo'
 import QuickActionCard from '../components/QuickActionCard'
+import QuickStatsBar from '../components/QuickStatsBar'
 import SummaryCard from '../components/SummaryCard'
 import TransactionTable from '../components/TransactionTable'
 import {
@@ -88,6 +90,8 @@ export default function DashboardPage({
         </div>
       </section>
 
+      <QuickStatsBar openingBalance={openingBalance} transactions={transactions} />
+
       <section className="summary-grid" aria-label="Financial summary">
         <SummaryCard
           label="Opening Balance"
@@ -171,6 +175,8 @@ export default function DashboardPage({
 
         <ActivityFeed activities={recentActivity} />
       </section>
+
+      <HelpInfo />
     </div>
   )
 }
