@@ -46,10 +46,9 @@ export default function DashboardPage({
       <section className="hero-panel hero-panel--school hero-panel--dashboard">
         <div className="hero-copy">
           <p className="section-kicker">Finance Overview</p>
-          <h2>Hello, {adminName}. Here is UpperHill Morit's live cash position.</h2>
+          <h2>Welcome back, {adminName}</h2>
           <p className="muted-copy">
-            The opening balance now sits inside the finance model, so your totals reflect where
-            the school books actually began before new income and expenses were added.
+            Your school cash position at a glance.
           </p>
           <div className="view-toggle" aria-label="Dashboard period selector">
             <button
@@ -70,22 +69,22 @@ export default function DashboardPage({
         </div>
 
         <div className={isDeficit ? 'hero-balance hero-balance--negative' : 'hero-balance'}>
-          <span>{period === 'month' ? 'Monthly closing position' : 'Overall closing position'}</span>
+          <span>{period === 'month' ? 'This Month' : 'Total Balance'}</span>
           <strong>KES {formatNumber(summary.balance)}</strong>
           <p>
             {isDeficit
-              ? `Expenses are above available funds by KES ${formatNumber(deficitAmount)}.`
-              : 'Available funds still cover the recorded expenses in this view.'}
+              ? `Over by KES ${formatNumber(deficitAmount)}`
+              : 'In the black'}
           </p>
         </div>
 
         <div className="hero-sidecard">
-          <p className="section-kicker">Cashbook Rule</p>
-          <h3>Opening balance + money in - money out</h3>
+          <p className="section-kicker">Formula</p>
+          <h3>Opening + In - Out</h3>
           <p>
             {isLoadingTransactions
-              ? 'Loading school records now.'
-              : 'UpperHill totals are recalculated from source entries every time.'}
+              ? 'Loading...'
+              : 'Auto-calculated from entries'}
           </p>
         </div>
       </section>
@@ -97,50 +96,45 @@ export default function DashboardPage({
           label="Opening Balance"
           amount={summary.openingBalance}
           tone="neutral"
-          helperText="Starting amount before this view's transactions"
+          helperText="Starting amount"
         />
         <SummaryCard
           label="Money In"
           amount={summary.income}
           tone="income"
-          helperText="All income recorded in this view"
+          helperText="Total income"
         />
         <SummaryCard
           label="Money Out"
           amount={summary.expenses}
           tone="expense"
-          helperText="All expenses recorded in this view"
+          helperText="Total expenses"
         />
         <SummaryCard
-          label={isDeficit ? 'Current Deficit' : 'Closing Balance'}
+          label={isDeficit ? 'Deficit' : 'Balance'}
           amount={summary.balance}
           tone={isDeficit ? 'alert' : 'balance'}
-          helperText={isDeficit ? 'Spending is higher than available funds' : 'Remaining funds after income and expenses'}
+          helperText={isDeficit ? 'Over budget' : 'Remaining'}
         />
       </section>
 
       <section className="status-strip" aria-label="Dashboard insights">
         <article className="status-tile">
-          <span>Current Scope</span>
+          <span>View</span>
           <strong>{scopeLabel}</strong>
-          <p>{period === 'month' ? 'Focused on the latest transaction month.' : 'Using every record in the cashbook.'}</p>
+          <p>{period === 'month' ? 'This month' : 'All time'}</p>
         </article>
         <article className="status-tile">
-          <span>Entries in View</span>
+          <span>Entries</span>
           <strong>{scopedTransactions.length}</strong>
-          <p>Transactions are sorted newest first in the ledger.</p>
-        </article>
-        <article className="status-tile">
-          <span>UpperHill Rule</span>
-          <strong>Opening + In - Out</strong>
-          <p>The system recalculates totals from source records every time.</p>
+          <p>Transactions recorded</p>
         </article>
       </section>
 
       <section className="actions-grid" aria-label="Quick actions">
         <QuickActionCard
-          title="Record Income"
-          description="Capture fees, donations, grants, and any other money received by the school."
+          title="Add Entry"
+          description="Record money in or out"
           to="/add"
           accent="income"
         />
@@ -151,8 +145,8 @@ export default function DashboardPage({
           accent="expense"
         />
         <QuickActionCard
-          title="Manage Settings"
-          description="Update the opening balance, export reports, and prepare the app for school use."
+          title="Settings"
+          description="Configure app & reports"
           to="/settings"
           accent="balance"
         />
@@ -162,13 +156,13 @@ export default function DashboardPage({
         <section className="content-card content-card--ledger">
           <div className="section-heading">
             <div>
-              <p className="section-kicker">Recent Transactions</p>
-              <h3>Latest activity from the UpperHill finance desk.</h3>
+              <p className="section-kicker">Recent</p>
+              <h3>Latest transactions</h3>
             </div>
-            <span className="pill">{recentTransactions.length} latest entries</span>
+            <span className="pill">{recentTransactions.length} entries</span>
           </div>
           <TransactionTable
-            emptyMessage={isLoadingTransactions ? 'Loading transactions...' : undefined}
+            emptyMessage={isLoadingTransactions ? 'Loading...' : 'No transactions yet'}
             transactions={recentTransactions}
           />
         </section>

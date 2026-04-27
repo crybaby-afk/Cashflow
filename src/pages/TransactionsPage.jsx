@@ -198,10 +198,9 @@ export default function TransactionsPage({
       <section className="content-card ledger-toolbar ledger-toolbar--school">
         <div>
           <p className="section-kicker">Cashbook</p>
-          <h2>Hello, {adminName}. Review and correct UpperHill Morit's ledger here.</h2>
+          <h2>All Transactions</h2>
           <p className="muted-copy">
-            Every movement lives in one place so you can filter, search, edit, and clean the books
-            without losing sight of the school's real balance.
+            View, search, edit, and manage all records.
           </p>
         </div>
 

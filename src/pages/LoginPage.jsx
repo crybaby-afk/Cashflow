@@ -41,33 +41,31 @@ export default function LoginPage({ onLogin, isSubmitting, isSupabaseReady }) {
             <img className="login-logo" src={upperhillLockup} alt="Upper Hill Academy Morit official logo" />
             <div>
               <p className="section-kicker login-kicker">UpperHill Morit</p>
-              <h2>Welcome to UpperHill Finance.</h2>
+              <h2>School Finance</h2>
               <p className="muted-copy login-copy">
-                Sign in to open the school cashbook, update balances, record fees and expenses,
-                and keep the finance desk moving with confidence.
+                Sign in to manage school cashbook and records.
               </p>
             </div>
           </div>
           <div className="login-banner">
-            <span>Sailing to Success</span>
-            <strong>UpperHill admin access only</strong>
-            <p>Approved school administrators can continue to the finance workspace below.</p>
+            <span>Admin Access</span>
+            <p>Sign in to continue</p>
           </div>
         </div>
 
         {!isSupabaseReady ? (
           <div className="form-message form-message--error">
-            Supabase credentials are missing. Add the project URL and anon key first.
+            Supabase credentials missing. Add project URL and anon key.
           </div>
         ) : null}
 
         <form className="transaction-form login-form" onSubmit={handleSubmit}>
           <label>
-            <span>Admin Email</span>
+            <span>Email</span>
             <input
               type="email"
               name="email"
-              placeholder="joanterer57@gmail.com"
+              placeholder="admin@school.ac.ke"
               value={formData.email}
               onChange={handleChange}
             />
@@ -78,7 +76,7 @@ export default function LoginPage({ onLogin, isSubmitting, isSupabaseReady }) {
             <input
               type="password"
               name="password"
-              placeholder="Enter your password"
+              placeholder="Enter password"
               value={formData.password}
               onChange={handleChange}
             />
@@ -88,7 +86,7 @@ export default function LoginPage({ onLogin, isSubmitting, isSupabaseReady }) {
 
           <div className="login-actions">
             <button type="submit" disabled={isSubmitting || !isSupabaseReady}>
-              {isSubmitting ? 'Opening UpperHill...' : 'Enter UpperHill Finance'}
+              {isSubmitting ? 'Signing in...' : 'Sign In'}
             </button>
           </div>
         </form>

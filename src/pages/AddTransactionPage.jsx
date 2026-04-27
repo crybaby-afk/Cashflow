@@ -89,16 +89,15 @@ export default function AddTransactionPage({ adminName, onAddTransaction, openin
     <div className="page-grid two-column-layout">
       <section className="content-card form-intro form-intro--school">
         <p className="section-kicker">Add Entry</p>
-        <h2>Hello, {adminName}. Record UpperHill's next finance movement with confidence.</h2>
+        <h2>New Transaction</h2>
         <p className="muted-copy">
-          Every new entry now sits on top of the opening balance from settings, so the school
-          ledger behaves more like a proper office cashbook than a temporary tracker.
+          Record money in or out for the school.
         </p>
         <div className="status-strip single-column-strip">
           <article className="status-tile">
             <span>Opening Balance</span>
             <strong>KES {Number(openingBalance).toLocaleString('en-KE')}</strong>
-            <p>Update this anytime from settings when the school starts a new reporting period.</p>
+            <p>From Settings</p>
           </article>
         </div>
       </section>
@@ -106,17 +105,17 @@ export default function AddTransactionPage({ adminName, onAddTransaction, openin
       <section className="content-card content-card--form">
         <div className="section-heading compact-heading">
           <div>
-            <p className="section-kicker">School Finance Form</p>
-            <h3>Record a new cashbook entry</h3>
+            <p className="section-kicker">Details</p>
+            <h3>New Entry</h3>
           </div>
           <Link className="text-link" to="/transactions">
-            Open cashbook
+            View All
           </Link>
         </div>
 
         <form className="transaction-form" onSubmit={handleSubmit}>
           <label>
-            <span>Transaction Type</span>
+            <span>Type</span>
             <select name="type" value={formData.type} onChange={handleChange}>
               <option value="in">Money In</option>
               <option value="out">Money Out</option>

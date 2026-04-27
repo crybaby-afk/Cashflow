@@ -14,12 +14,12 @@ export default function ActivityFeed({ activities = [] }) {
     <section className="content-card content-card--ledger">
       <div className="section-heading compact-heading">
         <div>
-          <p className="section-kicker">Recent Activity</p>
-          <h3>Small audit trail for finance actions</h3>
+          <p className="section-kicker">Activity</p>
+          <h3>Recent</h3>
         </div>
         <span className="pill activity-pill">
           <Icon name="activity" size={14} />
-          {activities.length} updates
+          {activities.length}
         </span>
       </div>
 
@@ -39,8 +39,8 @@ export default function ActivityFeed({ activities = [] }) {
         </div>
       ) : (
         <div className="empty-state compact-empty-state">
-          <h3>No activity yet.</h3>
-          <p>New entries, edits, deletes, and resets will appear here.</p>
+          <h3>No activity</h3>
+          <p>Actions will appear here</p>
         </div>
       )}
     </section>

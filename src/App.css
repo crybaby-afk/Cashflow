@@ -2206,3 +2206,365 @@ html[data-theme="dim"] .nav-link--active {
   max-width: 40ch;
   margin: 0 auto;
 }
+
+/* === FINAL POLISH === */
+
+/* Topbar improvements */
+.topbar-panel {
+  padding: 0.75rem 1rem;
+  background: var(--paper);
+  border-radius: 16px;
+  margin-bottom: 1rem;
+}
+
+.nav-links {
+  gap: 0.35rem;
+}
+
+.nav-link {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.82rem;
+}
+
+.nav-link span {
+  margin-left: 0.35rem;
+}
+
+/* Sync status improvements */
+.sync-status {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  background: var(--paper-soft);
+}
+
+/* Table row hover */
+.transaction-table tbody tr:hover {
+  background: var(--paper-soft);
+}
+
+/* Better focus states */
+*:focus-visible {
+  outline: 2px solid var(--emerald-700);
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--paper-soft);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--navy-700);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(13, 155, 88, 0.2);
+  color: var(--ink);
+}
+
+/* Print styles */
+@media print {
+  .app-footer,
+  .nav-links,
+  .topbar-panel,
+  .quick-stats-bar,
+  .actions-grid,
+  .help-info {
+    display: none !important;
+  }
+  
+  .hero-panel {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Cleaner background for light mode */
+html {
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.6), transparent 40%),
+    linear-gradient(180deg, #e8ecef 0%, #f4f6f8 100%);
+}
+
+/* Brighter emerald for better visibility */
+:root {
+  --emerald-700: #0d9b58;
+  --emerald-600: #10a862;
+}
+
+/* Card improvements */
+.content-card,
+.login-card,
+.loading-card,
+.summary-card,
+.quick-action {
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.content-card:hover,
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero panel improvements */
+.hero-panel {
+  border-radius: 24px;
+  padding: 2rem;
+}
+
+.hero-balance {
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+}
+
+.hero-balance strong {
+  font-size: 2.5rem;
+  letter-spacing: -0.02em;
+}
+
+/* Summary card improvements */
+.summary-card {
+  padding: 1.25rem;
+  border-radius: 16px;
+}
+
+.summary-card strong {
+  font-size: 1.5rem;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.summary-card .summary-helper {
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* Quick stats bar improvements */
+.quick-stats-bar {
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+}
+
+.quick-stat {
+  border-radius: 10px;
+  padding: 0.6rem 0.4rem;
+}
+
+.quick-stat__value {
+  font-size: 1rem;
+}
+
+/* Filter chips improvements */
+.filter-chip,
+.pill {
+  border-radius: 20px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.filter-chip--active {
+  background: var(--emerald-700);
+  color: #fff;
+}
+
+/* Button improvements */
+.primary-button,
+.secondary-button,
+button[type="submit"],
+button[type="button"] {
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.primary-button:hover,
+button[type="submit"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 155, 88, 0.3);
+}
+
+/* Form input improvements */
+.transaction-form input,
+.transaction-form select,
+.transaction-form textarea {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+.transaction-form input:focus,
+.transaction-form select:focus {
+  box-shadow: 0 0 0 3px rgba(13, 155, 88, 0.15);
+}
+
+/* Navigation improvements */
+.nav-link {
+  border-radius: 10px;
+  padding: 0.6rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.nav-link--active {
+  background: rgba(13, 155, 88, 0.12);
+  color: var(--emerald-700);
+  font-weight: 600;
+}
+
+/* Status tile improvements */
+.status-tile {
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.status-tile strong {
+  font-size: 1.1rem;
+}
+
+/* Quick action card improvements */
+.quick-action {
+  border-radius: 18px;
+  padding: 1.25rem;
+}
+
+.quick-action h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+
+.quick-action p {
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+/* Activity feed improvements */
+.activity-feed {
+  border-radius: 18px;
+  padding: 1.25rem;
+}
+
+.activity-item {
+  padding: 0.75rem;
+  border-radius: 10px;
+}
+
+/* Table improvements */
+.transaction-table {
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.transaction-table th {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0.75rem 1rem;
+}
+
+.transaction-table td {
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+}
+
+/* Help info improvements */
+.help-info {
+  border-radius: 18px;
+  padding: 1.5rem;
+}
+
+.help-item {
+  border-radius: 12px;
+  padding: 0.9rem;
+}
+
+/* Footer improvements */
+.app-footer {
+  border-radius: 20px 20px 0 0;
+  margin-top: 2rem;
+}
+
+/* Toast improvements */
+.toast-card {
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+
+/* Modal improvements */
+.modal-card {
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+/* Login page improvements */
+.login-card {
+  border-radius: 24px;
+  padding: 2rem;
+}
+
+.login-banner {
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-top: 1.5rem;
+}
+
+/* Empty state improvements */
+.empty-state {
+  border-radius: 16px;
+  padding: 2.5rem 1.5rem;
+}
+
+/* Section heading improvements */
+.section-heading {
+  padding: 1rem 0;
+}
+
+.section-heading h3 {
+  font-size: 1.2rem;
+}
+
+/* Ledger toolbar improvements */
+.ledger-toolbar {
+  border-radius: 18px;
+  padding: 1.5rem;
+}
+
+/* Settings page improvements */
+.settings-hero {
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
+.settings-section {
+  border-radius: 16px;
+  padding: 1.25rem;
+}

@@ -18,8 +18,8 @@ export default function TransactionTable({
   if (!transactions.length) {
     return (
       <div className="empty-state">
-        <h3>{emptyMessage || 'No transactions match this view yet.'}</h3>
-        <p>Add a new entry or switch filters to see more of the cashbook.</p>
+        <h3>{emptyMessage || 'No transactions'}</h3>
+        <p>Add a new entry to get started.</p>
       </div>
     )
   }

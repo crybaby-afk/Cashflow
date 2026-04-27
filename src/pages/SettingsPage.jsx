@@ -91,15 +91,14 @@ export default function SettingsPage({
     <div className="page-grid settings-grid">
       <section className="content-card settings-hero">
         <div>
-          <p className="section-kicker">Finance Settings</p>
-          <h2>Hello, {adminName}. Keep UpperHill's balance, reports, and app setup in order.</h2>
+          <p className="section-kicker">Settings</p>
+          <h2>Configure App</h2>
           <p className="muted-copy">
-            These tools help Upper Hill Academy Morit start from the correct balance, export
-            official reports, and stay ready for office and mobile use.
+            Manage balance, reports, and app setup.
           </p>
         </div>
         <div className="settings-highlight">
-          <span>Current Opening Balance</span>
+          <span>Opening Balance</span>
           <strong>KES {Number(openingBalance).toLocaleString('en-KE')}</strong>
           <p>{syncStatus}</p>
         </div>
@@ -108,14 +107,14 @@ export default function SettingsPage({
       <section className="content-card content-card--form">
         <div className="section-heading compact-heading">
           <div>
-            <p className="section-kicker">Opening Balance</p>
-            <h3>Set the starting cash position</h3>
+            <p className="section-kicker">Balance</p>
+            <h3>Opening Balance</h3>
           </div>
         </div>
 
         <form className="transaction-form" onSubmit={handleSubmit}>
           <label>
-            <span>Opening Balance (KES)</span>
+            <span>Amount (KES)</span>
             <input
               type="number"
               step="1"
@@ -146,12 +145,11 @@ export default function SettingsPage({
         <div className="section-heading compact-heading">
           <div>
             <p className="section-kicker">Reports</p>
-            <h3>Export or print the school cashflow record</h3>
+            <h3>Export Data</h3>
           </div>
         </div>
         <p className="muted-copy">
-          The print layout uses a formal school report header so you can hand it out or save it as
-          PDF for meetings, bursar review, and admin records.
+          Download or print transaction records.
         </p>
         <div className="settings-actions settings-actions--stacked">
           <button
@@ -159,7 +157,7 @@ export default function SettingsPage({
             onClick={() => downloadCashflowCsvReport({ openingBalance, transactions })}
           >
             <Icon name="ledger" size={16} />
-            Download CSV Report
+            Download CSV
           </button>
           <button
             type="button"
@@ -167,7 +165,7 @@ export default function SettingsPage({
             onClick={() => printCashflowReport({ openingBalance, transactions })}
           >
             <Icon name="dashboard" size={16} />
-            Print Official Report
+            Print Report
           </button>
         </div>
       </section>
@@ -175,19 +173,17 @@ export default function SettingsPage({
       <section className="content-card content-card--form">
         <div className="section-heading compact-heading">
           <div>
-            <p className="section-kicker">Install App</p>
-            <h3>Make the cashflow system feel like an app</h3>
+            <p className="section-kicker">App</p>
+            <h3>Install</h3>
           </div>
         </div>
         <p className="muted-copy">
-          On supported browsers, staff can install this tool on desktop or phone for faster access
-          from the school office. On iPhone or iPad, use the browser Share menu and choose Add to
-          Home Screen after the site is deployed.
+          Add to home screen for quick access.
         </p>
         <div className="settings-actions settings-actions--stacked">
           <button type="button" onClick={onInstallApp} disabled={!installState.canInstall}>
             <Icon name="plus" size={16} />
-            {installState.canInstall ? 'Install App' : 'Install Not Available Yet'}
+            {installState.canInstall ? 'Install App' : 'Not Available'}
           </button>
         </div>
       </section>
@@ -195,18 +191,17 @@ export default function SettingsPage({
       <section className="content-card content-card--form danger-card">
         <div className="section-heading compact-heading">
           <div>
-            <p className="section-kicker">Fresh Start</p>
-            <h3>Clear all testing records and return to zero</h3>
+            <p className="section-kicker">Reset</p>
+            <h3>Clear All Data</h3>
           </div>
         </div>
         <p className="muted-copy">
-          Use this once before handover if you want the school to begin with zero opening balance,
-          no test transactions, and a clean activity feed.
+          Remove all transactions and reset to zero.
         </p>
         <div className="settings-actions settings-actions--stacked">
           <button type="button" className="secondary-button danger-button" onClick={handleResetClick}>
             <Icon name="reset" size={16} />
-            {isResetting ? 'Resetting...' : 'Reset Finance Desk'}
+            {isResetting ? 'Resetting...' : 'Reset'}
           </button>
         </div>
       </section>
@@ -214,26 +209,25 @@ export default function SettingsPage({
       <section className="content-card content-card--form deployment-card">
         <div className="section-heading compact-heading">
           <div>
-            <p className="section-kicker">Deployment</p>
-            <h3>Share the school finance desk online</h3>
+            <p className="section-kicker">Deploy</p>
+            <h3>Go Live</h3>
           </div>
         </div>
         <p className="muted-copy">
-          This project is ready for Vercel deployment with routing support for React pages. After
-          deployment, staff can open the live link and install it on phones or desktops.
+          Deploy to Vercel for online access.
         </p>
         <div className="deployment-steps">
           <div className="deployment-step">
-            <strong>1. Import repo</strong>
-            <p>Open Vercel, import the Cashflow GitHub repository, and keep the framework as Vite.</p>
+            <strong>1. Import</strong>
+            <p>Import repo to Vercel as Vite project.</p>
           </div>
           <div className="deployment-step">
-            <strong>2. Add env variables</strong>
-            <p>Copy the Supabase URL, anon key, and admin email values into the Vercel project settings.</p>
+            <strong>2. Environment</strong>
+            <p>Add Supabase URL and anon key.</p>
           </div>
           <div className="deployment-step">
-            <strong>3. Deploy and install</strong>
-            <p>After the first deployment, open the live link on mobile and use Install App or Add to Home Screen.</p>
+            <strong>3. Deploy</strong>
+            <p>Deploy and install on device.</p>
           </div>
         </div>
       </section>
